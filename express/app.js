@@ -1,7 +1,12 @@
 const express = require("express");
-
 const app = express();
 
-app.listen(5000, (req, res) => {
-  console.log("app listening on port 5000");
+const { people } = require("./data.js");
+
+app.get("/", (req, res) => {
+  res.status(200).json({ people });
+});
+
+app.listen(5000, () => {
+  console.log("example app listening with port : 5000");
 });
