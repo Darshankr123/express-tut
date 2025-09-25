@@ -1,21 +1,31 @@
 const jwt = require("jsonwebtoken");
-const CustomAPIError = require("../errors/custom-error");
+const { BadRequestError } = require("../errors");
+
+require("dotenv").config();
 
 const login = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    throw new CustomAPIError("Please privide the valid user", 400);
+    throw new BadRequestError("Please privide the valid user", 400);
   }
-  const token = jwt.sign(req.body, "secret");
-  return res.status(200).json({ token });
+
+  console.log(req.body);
+
+  const id = Date.now();
+  console.log(id);
+
+  const token = jwt.sign({ id, username }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+  return res.status(200).json({ msg: "user created", token });
 };
+
 const dashboard = async (req, res) => {
   const luckyNumber = Math.floor(Math.random() * 100);
-  res.status(200).json({
-    msg: `Hello, Jhon Doe`,
+  return res.status(200).json({
+    msg: `Hello, ${req.username}`,
     secret: `Here is your authorized data, Your lucky number is ${luckyNumber}`,
   });
-  res.send("register");
 };
 
 module.exports = { login, dashboard };
